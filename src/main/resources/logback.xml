@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender class="ch.qos.logback.core.ConsoleAppender"
+      name="CONSOLE">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d [%thread] %-5level %-50logger{40} | %replace(%msg){'\n'," "s} | EX =
+                %replace(%throwable){'\n',' '}%n
+            </pattern>
+        </layout>
+    </appender>
+
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="RollingFile">
+        <encoder>
+            <pattern>%d [%thread] %-5level %-50logger{40} | %replace(%msg){'\n'," "s} | EX =
+                %replace(%throwable){'\n',' '}%n
+            </pattern>
+        </encoder>
+        <file>files/logs/app.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>files/logs/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>300MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <logger level="INFO" name="org.apache.commons.beanutils"/>
+    <logger level="WARN" name="sun"/>
+    <logger level="INFO" name="com.MyProject"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE">
+        </appender-ref>
+        <appender-ref ref="RollingFile"/>
+    </root>
+</configuration>

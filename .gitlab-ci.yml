@@ -1,0 +1,16 @@
+include:
+  # Gitlab ci common
+  - project: 'cl-platform/config/common-cicd-config'
+    ref: 'feat-MEDIAPTF-1471'
+    file: '/gitlab-ci-common.yml'
+
+variables:
+
+  ######### K8S #################
+  HELM_BASE_APP_NAME: "mediationplatform-customer-consumer"
+  HELM_APP_NAME: "$HELM_BASE_APP_NAME"
+
+  #########  branch names  #############
+  DEV_REF: '/^feat-MEDIAPTF-1584/'
+  UAT_REF: '/^develop/'
+  PROD_REF: '/^(master|main)$/'

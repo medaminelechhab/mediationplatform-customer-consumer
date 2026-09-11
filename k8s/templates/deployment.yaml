@@ -1,0 +1,216 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "helm.labelsMediation" . | nindent 4 }}
+spec:
+  minReadySeconds: 30
+  progressDeadlineSeconds: 120
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      annotations:
+        co.elastic.logs/enabled: 'true'
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.userId }}
+        runAsGroup: {{ .Values.groupId }}
+      volumes:
+        - name: "{{ .Chart.Name }}-storage"
+          persistentVolumeClaim:
+            claimName: "{{ .Chart.Name }}-storage"
+        - name: "mediationplatform-common-storage"
+          persistentVolumeClaim:
+            claimName: "mediationplatform-common-storage"
+      imagePullSecrets:
+        - name: {{ .Chart.Name }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image }}
+          resources:
+            limits:
+              memory: {{ .Values.deploy.limits.memory }}
+              cpu: {{ .Values.deploy.limits.cpu }}
+            requests:
+              memory: {{ .Values.deploy.requests.memory }}
+              cpu: {{ .Values.deploy.requests.cpu }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          volumeMounts:
+            - mountPath: "/home/{{ .Chart.Name }}/files"
+              name: "{{ .Chart.Name }}-storage"
+            - mountPath: "/home/{{ .Chart.Name }}/common"
+              name: "mediationplatform-common-storage"
+          env:
+            - name: MONGO_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-host
+            - name: MONGO_DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-database
+            - name: MONGO_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-username
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-password
+            - name: MONGO_DB_AUTHENTICATION_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-authentication-database
+            - name: COM_MyProject_LOGGING_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: com-MyProject-logging-level
+            - name: CONFIG_SERVER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: config-server-host
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: java-opts
+            - name: CLINKS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-url
+            - name: CLINKS_AUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-auth-url
+            - name: CLINKS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-username
+            - name: CLINKS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-password
+            - name: CLINKS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-client-id
+            - name: CLINKS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-client-secret
+            - name: CLINKS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-endpoint
+            - name: CLINKS_USE_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-proxy
+            - name: CLINKS_USE_PROXY_FOR_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-proxy-for-auth
+            - name: CLINKS_USE_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-ssl
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: truststore-password
+            - name: CERTIFICATE_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: certificate-alias
+            - name: ZBUS_AUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-auth-url
+            - name: ZBUS_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-base-url
+            - name: ZBUS_CLIENT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-client-name
+            - name: STREAM_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: customer-zbus-stream-id
+            - name: ZBUS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-client-id
+            - name: ZBUS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-client-secret
+            - name: ZBUS_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-scope
+            - name: ZBUS_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-scope
+            - name: ZBUS_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: customer-zbus-limit
+            - name: ZBUS_USE_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-use-proxy
+            - name: ZBUS_USE_PROXY_FOR_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-use-proxy-for-auth
+            - name: ZBUS_USE_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: zbus-use-ssl
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes-v3,zbus"

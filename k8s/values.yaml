@@ -1,0 +1,7 @@
+userId: 1001
+groupId: 2001
+service:
+  port: 80
+  targetPort: 8080
+registry:
+  config: eyJhdXRocyI6eyJhcHBzLWRvY2tlci5uZXh1cy1laW4uY29tLmludHJhb3JhbmdlIjp7InVzZXJuYW1lIjoiQ1BUX01PRV8wS08iLCJwYXNzd29yZCI6ImoxUlNEZHJATUtkQyIsImF1dGgiOiJRMUJVWDAxUFJWOHdTMDg2YWpGU1UwUmtja0JOUzJSRCJ9fX0=

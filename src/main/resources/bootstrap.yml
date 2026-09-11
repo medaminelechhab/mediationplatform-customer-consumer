@@ -1,0 +1,10 @@
+spring:
+  application:
+    name:
+  profiles:
+    active:
+  cloud:
+    config:
+      uri:
+  main:
+    allow-bean-definition-overriding:

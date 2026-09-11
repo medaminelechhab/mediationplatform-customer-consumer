@@ -1,0 +1,14 @@
+platform: dev
+ingressUrl: https://dashboard.caas-cnp-apps-np.com.intraMyProject/#/replicationcontroller?namespace=0ko-cl-mptf-dev
+namespace: 0ko-cl-mptf-dev
+env: dev
+image: "${DOCKER_SNAPSHOT_IMAGE}"
+deploy:
+  limits:
+    cpu: 1
+    memory: 512Mi
+  requests:
+    cpu: 1m
+    memory: 100Mi
+pvc:
+  storage: 500Mi
